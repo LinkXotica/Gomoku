@@ -10,8 +10,6 @@ public class HumanPlayer extends Player {
 		super(turn);
 	}
 	
-	
-	@Override
 	public int[] nextMove() {
 		String move = input.next();
 		int [] place = new int[2];

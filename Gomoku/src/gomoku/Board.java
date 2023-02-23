@@ -42,5 +42,16 @@ public class Board {
 	}
 	
 	
+	public String toString() {
+		String str = null;
+		for(int i = 0; i < board.length; i ++) {
+			for(int j = 0; j < board[i].length; j ++) {
+				str = str + board[i][j].getStone();
+			}
+		}
+		return str;
+		
+	}
+	
 	
 }
