@@ -37,5 +37,12 @@ public class Board {
 		return board.length;
 	}
 	
+	public Place getPlace(int [] place) {
+		return board[place[0]][place[1]];
+	}
+	
+	public Place[][] getBoard() {
+		return board;
+	}
 	
 }

@@ -33,13 +33,15 @@ public class GomokuUI {
 		String boardString = game.getBoard().toString();
 		int boardSize = game.getBoard().length() * 3;
 		
+		System.out.println("X 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14" );
 		for(int i = 0; i < boardSize/3; i++) {
+			System.out.print(i);
 			System.out.println(boardString.substring(i * boardSize, boardSize * (i+1)));
 		}
 	}
 	
 	public void PvP() {
-		while(!game.winConditon()) {
+		while(!game.winConditonp1() || !game.winConditonp2()) {
 			displayBoard();	
 			System.out.print("Enter coordinates for your move (X,Y) -> ");
 			game.nextMove();

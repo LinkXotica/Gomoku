@@ -31,8 +31,8 @@ public class Controller {
 			if(move == null) {
 			//??????????????????????????????????????????
 			} else {
-				place[0] = Integer.parseInt(move.split(",")[0]); 
-				place[1] = Integer.parseInt(move.split(",")[1]); 
+				place[0] = Integer.parseInt(move.split(",")[1]); 
+				place[1] = Integer.parseInt(move.split(",")[0]); 
 				
 			}
 		} else {
@@ -42,7 +42,6 @@ public class Controller {
 		}
 		
 		
-		System.out.print(place[1]);
 		
 		return place;
 	}	
