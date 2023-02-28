@@ -7,7 +7,7 @@ public class ComPlayer extends Player {
 	}
 	
 	public int[] nextMove() {
-		int[] place = new int[2];
+		int[] place = {0,0};
 		
 		return place;
 	}

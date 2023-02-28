@@ -6,29 +6,17 @@ public class Place {
 	
 	private Set<String> goneDirection;
 	private Set<String> cameDirection;
-	private int [] place;
 	private String stone;
 	
-	public Place(int [] place, String stone) {
-		this.setPlace(place);
+	public Place(String stone) {
 		this.setStone(stone);
 	}
 	
-	public Place(int [] place) {
-		this(place, " - ");
+	public Place() {
+		this(" - ");
 	}
-	
-	
 	
 	//Getters and Setters *****************
-	
-	public int [] getPlace() {
-		return place;
-	}
-
-	public void setPlace(int [] place) {
-		this.place = place;
-	}
 
 	public String getStone() {
 		return stone;
