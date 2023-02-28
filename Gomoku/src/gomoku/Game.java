@@ -76,6 +76,9 @@ public class Game {
 			this.player2 = new ComPlayer(false);
 		}
 		
+		
+		
+		
 		return mode;
 		
 		

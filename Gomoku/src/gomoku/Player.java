@@ -23,5 +23,9 @@ public abstract class Player {
 	public void setTurn(boolean turn) {
 		this.turn = turn;
 	}
+	
+	public String playerType() {
+		return null;
+	}
 
 }

@@ -12,17 +12,20 @@ public class Controller {
 	
 	public int readMode() {
 		int mode = input.nextInt();
+		input.nextLine();
 		return mode;
 	}
 	
 	public int[] playerMove(Player player) {
 		
-		input.next();
+		
+		
 		
 		int [] place = new int[2];
 		
-		if (player.getClass().getSimpleName() == "HumanPlayer") {
-		
+		if (player.playerType() == "Human") {
+			
+			
 			String move = input.nextLine();
 		
 			if(move == null) {
@@ -38,7 +41,7 @@ public class Controller {
 			
 		}
 		
-		System.out.print(place[0]);
+		
 		System.out.print(place[1]);
 		
 		return place;

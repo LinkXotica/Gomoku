@@ -9,5 +9,9 @@ public class HumanPlayer extends Player {
 	public void changeTurn() {
 		setTurn(!isTurn());
 	}
+	
+	public String playerType() {
+		return "Human";
+	}
 
 }

@@ -11,5 +11,9 @@ public class ComPlayer extends Player {
 		
 		return place;
 	}
+	
+	public String playerType() {
+		return "Com";
+	}
 
 }
