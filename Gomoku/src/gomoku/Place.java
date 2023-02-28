@@ -46,7 +46,7 @@ public class Place {
 		return goneDirection;
 	}
 	
-	// Add and Clear to Direction Set *****************
+	// Add and Clear Direction Set *****************
 
 	public void addGoneDirection(String d) {
 		goneDirection.add(d);

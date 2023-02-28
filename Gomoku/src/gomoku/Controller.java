@@ -30,6 +30,8 @@ public class Controller {
 		return place;
 	}
 	
+	//i think scanner should be here and decision should be in HumanPlayer
+	
 	
 
 }
