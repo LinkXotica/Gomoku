@@ -11,6 +11,12 @@ import java.util.List;
  * intersection is represented by the indices (0, 0), and the
  * bottom-right intersection is represented by the indices (n-1, n-1).
  */
+
+/** @author Danilo Romero
+ * 
+ * 
+ *
+ */
 public class Board {
 	
 	private int size;
@@ -172,7 +178,9 @@ public class Board {
 		}
     	return null;
     }
-    
+    /** check if horizontal row has same stone
+     *  catches if goes out of bounds
+     *  @param Place starting place*/
     public boolean checkHorizontal(Place start) {
     	
     	try {
@@ -191,6 +199,10 @@ public class Board {
     	
     }
     
+    /** check if vertical column has same stone
+     *  catches if goes out of bounds
+     * @param Place starting place*/
+    
     public boolean checkVertical(Place start) {
     	
     	try {
@@ -207,6 +219,10 @@ public class Board {
     	return true;
     	
     }
+    
+    /** check if Diagonal has same stone
+     * catches if goes out of bounds
+     * @param Place starting place*/
     
     public boolean checkDiagonal(Place start) {
     	
@@ -250,6 +266,7 @@ public class Board {
         /** 0-based row index of this place. */
         public final int y;
         
+        /** Assigned Player */
         private Player player = null;
 
         /** Create a new place of the given indices. 
@@ -268,6 +285,7 @@ public class Board {
         	
         }
         
+        /** Assign a Player */
         public Player checkStone() {
         	return player;
         }
