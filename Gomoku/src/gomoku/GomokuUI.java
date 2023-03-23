@@ -41,7 +41,7 @@ public class GomokuUI {
 	}
 	
 	public void PvP() {
-		while(!game.winConditonp1() || !game.winConditonp2()) {
+		while(true) {
 			displayBoard();	
 			System.out.print("Enter coordinates for your move (X,Y) -> ");
 			game.nextMove();
