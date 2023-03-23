@@ -126,7 +126,25 @@ class BoardTest {
 	}
 	
 	@Test
-	void testCheckHorizontal1() {
+	void testCheckHorizontal() {
+		board.placeStone(1, 1, board.getPlayer1());
+		board.placeStone(1, 2, board.getPlayer2());
+		board.placeStone(2, 1, board.getPlayer1());
+		board.placeStone(3, 1, board.getPlayer1());
+		board.placeStone(4, 1, board.getPlayer1());
+		board.placeStone(5, 1, board.getPlayer1());
+		board.placeStone(14, 1, board.getPlayer1());
+		board.placeStone(13, 1, board.getPlayer1());
+		board.placeStone(12, 1, board.getPlayer1());
+		board.placeStone(11, 1, board.getPlayer1());
+		
+		assertTrue(board.checkHorizontal(board.getPlace(1, 1)));
+		assertFalse(board.checkHorizontal(board.getPlace(0, 0)));
+		assertFalse(board.checkHorizontal(board.getPlace(11, 0)));
+	}
+	
+	@Test
+	void testCheckVertical() {
 		board.placeStone(1, 1, board.getPlayer1());
 		board.placeStone(1, 2, board.getPlayer2());
 		board.placeStone(2, 1, board.getPlayer1());
