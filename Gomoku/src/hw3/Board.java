@@ -175,13 +175,15 @@ public class Board {
     public boolean checkHorizontal(Place start) {
     	
     	try {
-    		for(int i = 1; i <= 5; i++) {
-    			if(board[start.y][start.x].checkStone() != board[start.y + i][start.x].checkStone()) {
+    		for(int i = 1; i < 5; i++) {
+    			if(board[start.y][start.x].checkStone() != board[start.y][start.x + i].checkStone() || board[start.y][start.x + i].checkStone() == null) {
     				return false;
+    				
     			}
     			
     		}
     	} catch(ArrayIndexOutOfBoundsException e) {
+    		System.out.println("notGood");
     		return false;
     	}
     	return true;
@@ -191,8 +193,8 @@ public class Board {
     public boolean checkVertical(Place start) {
     	
     	try {
-    		for(int i = 1; i <= 5; i++) {
-    			if(board[start.y][start.x].checkStone() != board[start.y][start.x + i].checkStone()) {
+    		for(int i = 1; i < 5; i++) {
+    			if(board[start.y][start.x].checkStone() != board[start.y + i][start.x].checkStone() || board[start.y + i][start.x].checkStone() == null) {
     				return false;
     			}
     			
@@ -207,8 +209,8 @@ public class Board {
     public boolean checkDiagonal(Place start) {
     	
     	try {
-    		for(int i = 1; i <= 5; i++) {
-    			if(board[start.y][start.x].checkStone() != board[start.y + i][start.x + i].checkStone()) {
+    		for(int i = 1; i < 5; i++) {
+    			if(board[start.y][start.x].checkStone() != board[start.y + i][start.x + i].checkStone() || board[start.y + i][start.x + i].checkStone() == null) {
     				return false;
     			}
     			
@@ -226,6 +228,10 @@ public class Board {
 
 	public Player getPlayer1() {
 		return player1;
+	}
+	
+	public Place getPlace(int x, int y) {
+		return board[y][x];
 	}
 
 	/**
