@@ -21,6 +21,7 @@ public class Board {
 
     /** Create a new board of the default size. */
     public Board() {
+    	this(15);
     }
 
     /** Create a new board of the specified size. */
@@ -29,7 +30,7 @@ public class Board {
     	board = new Place[size][size];
 		for(int i = 0; i < size; i ++) {
 			for(int j = 0; j < size; j ++) {
-				this.board[i][j] = new Place(i,j);
+				this.board[i][j] = new Place(j,i);
 			}
 		}
     }
@@ -157,13 +158,13 @@ public class Board {
 				}
 				if(this.checkHorizontal(board[i][j])) {
 					for(int count = 0; count < 5; count++) {
-		    			line.add(board[i+count][j+count]);	
+		    			line.add(board[i][j+count]);	
 		    		}
 					return line;
 				}
 				if(this.checkVertical(board[i][j])) {
 					for(int count = 0; count < 5; count++) {
-		    			line.add(board[i+count][j+count]);	
+		    			line.add(board[i+count][j]);	
 		    		}
 					return line;
 				}
@@ -183,7 +184,7 @@ public class Board {
     			
     		}
     	} catch(ArrayIndexOutOfBoundsException e) {
-    		System.out.println("notGood");
+    		
     		return false;
     	}
     	return true;
@@ -195,9 +196,10 @@ public class Board {
     	try {
     		for(int i = 1; i < 5; i++) {
     			if(board[start.y][start.x].checkStone() != board[start.y + i][start.x].checkStone() || board[start.y + i][start.x].checkStone() == null) {
+
     				return false;
     			}
-    			
+
     		}
     	} catch(ArrayIndexOutOfBoundsException e) {
     		return false;
