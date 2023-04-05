@@ -104,7 +104,7 @@ public class Board {
     }
 
     /**
-     * Rreturn a boolean value indicating whether the specified 
+     * Return a boolean value indicating whether the specified 
      * intersection (x, y) on the board is occupied by the given 
      * player or not.
      *
