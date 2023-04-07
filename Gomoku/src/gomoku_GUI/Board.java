@@ -1,4 +1,4 @@
-package hw3;
+package gomoku_GUI;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,18 +11,12 @@ import java.util.List;
  * intersection is represented by the indices (0, 0), and the
  * bottom-right intersection is represented by the indices (n-1, n-1).
  */
-
-/** @author Danilo Romero
- * 
- * 
- *
- */
 public class Board {
 	
 	private int size;
 	private Place [][] board;
-	private Player player1 = new Player("1");
-	private Player player2 = new Player("2");	
+	private Player player1;
+	private Player player2;	
 	
 
     /** Create a new board of the default size. */
@@ -36,9 +30,11 @@ public class Board {
     	board = new Place[size][size];
 		for(int i = 0; i < size; i ++) {
 			for(int j = 0; j < size; j ++) {
-				this.board[i][j] = new Place(j,i);
+				this.board[i][j] = new Place(i,j);
 			}
 		}
+		
+		
     }
 
     /** Return the size of this board. */
@@ -164,13 +160,13 @@ public class Board {
 				}
 				if(this.checkHorizontal(board[i][j])) {
 					for(int count = 0; count < 5; count++) {
-		    			line.add(board[i][j+count]);	
+		    			line.add(board[i+count][j+count]);	
 		    		}
 					return line;
 				}
 				if(this.checkVertical(board[i][j])) {
 					for(int count = 0; count < 5; count++) {
-		    			line.add(board[i+count][j]);	
+		    			line.add(board[i+count][j+count]);	
 		    		}
 					return line;
 				}
@@ -178,57 +174,28 @@ public class Board {
 		}
     	return null;
     }
-    /** check if horizontal row has same stone
-     *  catches if goes out of bounds
-     *  @param Place starting place*/
+    
     public boolean checkHorizontal(Place start) {
     	
     	try {
-    		for(int i = 1; i < 5; i++) {
-    			if(board[start.y][start.x].checkStone() != board[start.y][start.x + i].checkStone() || board[start.y][start.x + i].checkStone() == null) {
+    		for(int i = 1; i <= 5; i++) {
+    			if(board[start.y][start.x].checkStone() != board[start.y + i][start.x].checkStone()) {
     				return false;
-    				
     			}
     			
     		}
     	} catch(ArrayIndexOutOfBoundsException e) {
-    		
     		return false;
     	}
     	return true;
     	
     }
-    
-    /** check if vertical column has same stone
-     *  catches if goes out of bounds
-     * @param Place starting place*/
     
     public boolean checkVertical(Place start) {
     	
     	try {
-    		for(int i = 1; i < 5; i++) {
-    			if(board[start.y][start.x].checkStone() != board[start.y + i][start.x].checkStone() || board[start.y + i][start.x].checkStone() == null) {
-
-    				return false;
-    			}
-
-    		}
-    	} catch(ArrayIndexOutOfBoundsException e) {
-    		return false;
-    	}
-    	return true;
-    	
-    }
-    
-    /** check if Diagonal has same stone
-     * catches if goes out of bounds
-     * @param Place starting place*/
-    
-    public boolean checkDiagonal(Place start) {
-    	
-    	try {
-    		for(int i = 1; i < 5; i++) {
-    			if(board[start.y][start.x].checkStone() != board[start.y + i][start.x + i].checkStone() || board[start.y + i][start.x + i].checkStone() == null) {
+    		for(int i = 1; i <= 5; i++) {
+    			if(board[start.y][start.x].checkStone() != board[start.y][start.x + i].checkStone()) {
     				return false;
     			}
     			
@@ -238,6 +205,36 @@ public class Board {
     	}
     	return true;
     	
+    }
+    
+    public boolean checkDiagonal(Place start) {
+    	
+    	try {
+    		for(int i = 1; i <= 5; i++) {
+    			if(board[start.y][start.x].checkStone() != board[start.y + i][start.x + i].checkStone()) {
+    				return false;
+    			}
+    			
+    		}
+    	} catch(ArrayIndexOutOfBoundsException e) {
+    		return false;
+    	}
+    	return true;
+    	
+    }
+    
+    public void setPlayerType(int p1, int p2) {
+    	if(p1 == 1) {
+			player1 = new HumanPlayer("1");
+		} else {
+			player1 = new ComPlayer("1");
+		}
+		
+		if(p2 == 1) {
+			player2 = new HumanPlayer("2");
+		} else {
+			player2 = new ComPlayer("2");
+		}
     }
 
     public Player getPlayer2() {
@@ -246,10 +243,6 @@ public class Board {
 
 	public Player getPlayer1() {
 		return player1;
-	}
-	
-	public Place getPlace(int x, int y) {
-		return board[y][x];
 	}
 
 	/**
@@ -266,7 +259,6 @@ public class Board {
         /** 0-based row index of this place. */
         public final int y;
         
-        /** Assigned Player */
         private Player player = null;
 
         /** Create a new place of the given indices. 
@@ -285,7 +277,6 @@ public class Board {
         	
         }
         
-        /** Assign a Player */
         public Player checkStone() {
         	return player;
         }
@@ -293,5 +284,6 @@ public class Board {
         // other methods if needed ...
     }
 }
+
 
 
