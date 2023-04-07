@@ -1,31 +1,28 @@
 package gomoku_GUI;
 
+/**
+ * A player in an Omok game. It holds the name of the player and
+ * can be used to identify a specific player throughout the game. 
+ * The Player class helps to keep track of the moves made by each 
+ * player during the game.
+ */
 public abstract class Player {
-	
-	private boolean turn = false;
-	
-	protected Player(Boolean turn) {
-		this.setTurn(turn);
-	}
-	
-	protected int[] nextMove() {
-		return null;
-	}
-	
-	protected void changeTurn() {
-		setTurn(!isTurn());
-	}
 
-	public boolean isTurn() {
-		return turn;
-	}
+    /** Name of this player. */
+    protected final String name;
 
-	public void setTurn(boolean turn) {
-		this.turn = turn;
-	}
-	
-	public String playerType() {
-		return null;
-	}
+    /** Create a new player with the given name. */
+    public Player(String name) {
+        this.name = name;
+    }
 
+    /** Return the name of this player. */
+    public String name() {
+        return name;
+    }
+    
+    public abstract int playerType();
+
+	protected abstract int[] nextMove();
 }
+

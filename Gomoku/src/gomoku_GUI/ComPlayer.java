@@ -2,8 +2,8 @@ package gomoku_GUI;
 
 public class ComPlayer extends Player {
 
-	protected ComPlayer(Boolean turn) {
-		super(turn);
+	protected ComPlayer(String name) {
+		super(name);
 	}
 	
 	public int[] nextMove() {
@@ -12,8 +12,8 @@ public class ComPlayer extends Player {
 		return place;
 	}
 	
-	public String playerType() {
-		return "Com";
+	public int playerType() {
+		return 2;
 	}
 
 }
