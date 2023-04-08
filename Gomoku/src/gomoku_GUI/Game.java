@@ -73,7 +73,21 @@ public class Game {
 	}
 	//wincondition
 	public boolean winConditon() {
-		boolean win = true;
+		
+		if(board.winningRow() != null) {
+			return true;
+		}
+		return false;
+		
+	}
+	
+	public Player wonBy() {
+		
+		if(board.isWonBy(board.getPlayer1())) {
+			return board.getPlayer1();
+		} 
+		return board.getPlayer2();
+		
 	}
 	//Controller Call
 	

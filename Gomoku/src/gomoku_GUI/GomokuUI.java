@@ -2,7 +2,7 @@ package gomoku_GUI;
 
 public class GomokuUI {
 	
-	private Game game;
+	private Game game = new Game();
 	
 	//calls for start of game
 	public static void main(String [] args) {
@@ -21,7 +21,7 @@ public class GomokuUI {
 		game.mode();
 		
 		
-		while(true) {
+		while(!game.winConditon()) {
 			displayBoard();	
 			System.out.print("Enter coordinates for your move (X,Y) -> ");
 			game.nextMove();
@@ -37,7 +37,10 @@ public class GomokuUI {
 		System.out.println("X 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14" );
 		for(int i = 0; i < boardSize/3; i++) {
 			System.out.print(i);
-			System.out.println(boardString.substring(i * boardSize, boardSize * (i+1)));
+			for(int j = 0; j < boardSize/3; j++) {
+				System.out.print(" " + boardString.substring((i * game.getBoard().size()) + j , (i * game.getBoard().size()) + j+1) + " ");
+			}
+			System.out.println();
 		}
 	}
 }

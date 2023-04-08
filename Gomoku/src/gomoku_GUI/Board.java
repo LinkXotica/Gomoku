@@ -11,6 +11,12 @@ import java.util.List;
  * intersection is represented by the indices (0, 0), and the
  * bottom-right intersection is represented by the indices (n-1, n-1).
  */
+
+/** @author Danilo Romero
+ * 
+ * 
+ *
+ */
 public class Board {
 	
 	private int size;
@@ -30,11 +36,9 @@ public class Board {
     	board = new Place[size][size];
 		for(int i = 0; i < size; i ++) {
 			for(int j = 0; j < size; j ++) {
-				this.board[i][j] = new Place(i,j);
+				this.board[i][j] = new Place(j,i);
 			}
 		}
-		
-		
     }
 
     /** Return the size of this board. */
@@ -160,13 +164,13 @@ public class Board {
 				}
 				if(this.checkHorizontal(board[i][j])) {
 					for(int count = 0; count < 5; count++) {
-		    			line.add(board[i+count][j+count]);	
+		    			line.add(board[i][j+count]);	
 		    		}
 					return line;
 				}
 				if(this.checkVertical(board[i][j])) {
 					for(int count = 0; count < 5; count++) {
-		    			line.add(board[i+count][j+count]);	
+		    			line.add(board[i+count][j]);	
 		    		}
 					return line;
 				}
@@ -174,31 +178,40 @@ public class Board {
 		}
     	return null;
     }
-    
+    /** check if horizontal row has same stone
+     *  catches if goes out of bounds
+     *  @param Place starting place*/
     public boolean checkHorizontal(Place start) {
     	
     	try {
-    		for(int i = 1; i <= 5; i++) {
-    			if(board[start.y][start.x].checkStone() != board[start.y + i][start.x].checkStone()) {
+    		for(int i = 1; i < 5; i++) {
+    			if(board[start.y][start.x].checkStone() != board[start.y][start.x + i].checkStone() || board[start.y][start.x + i].checkStone() == null) {
     				return false;
+    				
     			}
     			
     		}
     	} catch(ArrayIndexOutOfBoundsException e) {
+    		
     		return false;
     	}
     	return true;
     	
     }
+    
+    /** check if vertical column has same stone
+     *  catches if goes out of bounds
+     * @param Place starting place*/
     
     public boolean checkVertical(Place start) {
     	
     	try {
-    		for(int i = 1; i <= 5; i++) {
-    			if(board[start.y][start.x].checkStone() != board[start.y][start.x + i].checkStone()) {
+    		for(int i = 1; i < 5; i++) {
+    			if(board[start.y][start.x].checkStone() != board[start.y + i][start.x].checkStone() || board[start.y + i][start.x].checkStone() == null) {
+
     				return false;
     			}
-    			
+
     		}
     	} catch(ArrayIndexOutOfBoundsException e) {
     		return false;
@@ -207,11 +220,15 @@ public class Board {
     	
     }
     
+    /** check if Diagonal has same stone
+     * catches if goes out of bounds
+     * @param Place starting place*/
+    
     public boolean checkDiagonal(Place start) {
     	
     	try {
-    		for(int i = 1; i <= 5; i++) {
-    			if(board[start.y][start.x].checkStone() != board[start.y + i][start.x + i].checkStone()) {
+    		for(int i = 1; i < 5; i++) {
+    			if(board[start.y][start.x].checkStone() != board[start.y + i][start.x + i].checkStone() || board[start.y + i][start.x + i].checkStone() == null) {
     				return false;
     			}
     			
@@ -244,6 +261,27 @@ public class Board {
 	public Player getPlayer1() {
 		return player1;
 	}
+	
+	public Place getPlace(int x, int y) {
+		return board[y][x];
+	}
+	
+	public String toString() {
+		
+		String b = "";
+		
+		for(int i = 0; i < size; i++) {
+			for( int j = 0; j < size; j++) {
+				if(board[i][j].checkStone() == null) {
+					b = b + "-";
+				} else {
+					b = b + board[i][j].checkStone().name();
+				}
+			}
+		}
+		return b;
+		
+	}
 
 	/**
      * An intersection on an Omok board identified by its 0-based column
@@ -259,6 +297,7 @@ public class Board {
         /** 0-based row index of this place. */
         public final int y;
         
+        /** Assigned Player */
         private Player player = null;
 
         /** Create a new place of the given indices. 
@@ -277,6 +316,7 @@ public class Board {
         	
         }
         
+        /** Assign a Player */
         public Player checkStone() {
         	return player;
         }
@@ -284,6 +324,4 @@ public class Board {
         // other methods if needed ...
     }
 }
-
-
 
