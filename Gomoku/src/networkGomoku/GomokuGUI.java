@@ -4,6 +4,9 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -28,7 +31,9 @@ public class GomokuGUI extends NoApplet {
 	JMenu menu;
 	BoardPanel board;
 	JMenuItem play; 
-	JPanel button;
+	JMenuItem connect; 
+	JPanel buttonPanel;
+	List<JRadioButton> buttons = new LinkedList<JRadioButton>();
 	JLayeredPane layer;
 	
 	
@@ -41,7 +46,9 @@ public class GomokuGUI extends NoApplet {
 		menu = new JMenu("Game");
 		board = new BoardPanel(game.getBoard());
 		play = new JMenuItem("Play", KeyEvent.VK_P);
-		button = buttonLayout();
+		connect = new JMenuItem("Connect", KeyEvent.VK_C);
+		buttonPanel = buttonLayout();
+		
 		configureGUI(dim);
 		
 	}
@@ -63,7 +70,18 @@ public class GomokuGUI extends NoApplet {
 			this.playGame();
 		});
 		
+		connect.setIcon(null);
+		connect.setAccelerator(KeyStroke.getKeyStroke(
+		   KeyEvent.VK_C, InputEvent.ALT_DOWN_MASK));
+		connect.getAccessibleContext().setAccessibleDescription(
+		   "Play a new game");
+		
+		connect.addActionListener(e ->{
+			this.connectGame();
+		});
+		
 		menu.add(play);
+		menu.add(connect);
 		
 		menubar.add(menu);
 		
@@ -75,7 +93,7 @@ public class GomokuGUI extends NoApplet {
 		
 		frame.setJMenuBar(menubar);
 		
-		layer = layer(board, button);
+		layer = layer(board, buttonPanel);
 		
 		frame.add(layer);
 
@@ -93,23 +111,38 @@ public class GomokuGUI extends NoApplet {
 		for(int i = 0; i < 15; i++) {
 			for(int j = 0; j < 15; j++) {
 				
-				createButton(buttonPanel,j,i);
+				createButton(j,i);
+				buttonPanel = setButtons(buttonPanel);
 				
 			}
 		}
 		
-		
-		
-		
-		
 		return buttonPanel;
 		
 	}
-	
+	//stinky stink
 	public void setButtonLayout() {
 		
-		button.setBounds(0,0,300,300);
-		layer.add(button, JLayeredPane.DEFAULT_LAYER);
+		buttonPanel.setBounds(0,0,300,300);
+		layer.add(buttonPanel, JLayeredPane.DEFAULT_LAYER);
+	}
+	
+	public JPanel setButtons(JPanel panel) {
+		
+		
+		
+		for(int i = 0; i < 15; i++) {
+			for(int j = 0; j < 15; j++) {
+				
+				System.out.print(buttons.size());
+				
+				panel.add(buttons.get((i*15)+ j));
+				
+			}
+		}
+		
+		return panel;
+		
 	}
 	
 	public static JLayeredPane layer(JPanel board, JPanel button) {
@@ -132,7 +165,7 @@ public class GomokuGUI extends NoApplet {
 		
 	}
 	
-	public void createButton(JPanel panel, int x, int y) {
+	public void createButton(int x, int y) {
 		
 		JRadioButton button = new JRadioButton();
 		
@@ -152,23 +185,28 @@ public class GomokuGUI extends NoApplet {
 			
 			if(game.winConditon()) {
 				System.out.println("Game Won");
-				this.button.setVisible(false);
+				this.buttonPanel.setVisible(false);
 			}
 		});
 		button.setEnabled(true);
-		panel.add(button);
+		buttons.add(button);
+		
 		
 	}
 	
 	public void playGame() {
-		layer.remove(button);
+		layer.remove(buttonPanel);
 		game.getBoard().clear();
-		button = buttonLayout();
+		buttonPanel = buttonLayout();
 		setButtonLayout();
 		
-		button.setVisible(true);
+		buttonPanel.setVisible(true);
 		
 		
+		
+	}
+	
+	public void connectGame() {
 		
 	}
 	
