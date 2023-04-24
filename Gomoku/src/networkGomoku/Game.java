@@ -1,4 +1,4 @@
-package gomoku_GUI;
+package networkGomoku;
 
 public class Game {
 	
