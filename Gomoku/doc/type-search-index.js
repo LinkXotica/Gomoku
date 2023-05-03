@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"networkGomoku","l":"NetworkAdapter.MessageListener"},{"p":"networkGomoku","l":"NetworkAdapter.MessageType"},{"p":"networkGomoku","l":"NetworkAdapter"}];updateSearchResults();

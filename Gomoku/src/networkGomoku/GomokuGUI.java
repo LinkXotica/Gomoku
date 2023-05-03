@@ -14,19 +14,10 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
+import javax.swing.*;
+
+import networkGomoku.NetworkAdapter.MessageListener;
+import networkGomoku.NetworkAdapter.MessageType;
 
 @SuppressWarnings("serial")
 public class GomokuGUI extends JFrame {
@@ -117,7 +108,7 @@ public class GomokuGUI extends JFrame {
 		game.getBoard().setPlayerType(1, 1);
 		game.getBoard().placeStone(1,10,game.getBoard().getPlayer1());
 		
-		//buttons.get(2).doClick();
+		buttons.get(16).doClick();
 		
 		
 	}
@@ -207,6 +198,9 @@ public class GomokuGUI extends JFrame {
 		System.out.println(x + " " + y);
 		if(game.getp1Turn() == true) {
 			game.getBoard().placeStone(x, y, game.getBoard().getPlayer1());
+			adapter.writeMove(x, y);
+			networkFrame.status.append("Move: " + x + " " + y + "\n");
+			
 		} else {
 			game.getBoard().placeStone(x, y, game.getBoard().getPlayer2());
 		}
@@ -215,7 +209,8 @@ public class GomokuGUI extends JFrame {
 		this.board.setEnabled(true);
 		game.switchTurn();
 		
-		if(game.winConditon()) {
+		
+		if (game.winConditon()) {
 			System.out.println("Game Won");
 			this.buttonPanel.setVisible(false);
 		}
@@ -226,6 +221,7 @@ public class GomokuGUI extends JFrame {
 		System.out.println(x + " " + y);
 		if(game.getp1Turn() == true) {
 			game.getBoard().placeStone(x, y, game.getBoard().getPlayer1());
+			
 		} else {
 			game.getBoard().placeStone(x, y, game.getBoard().getPlayer2());
 		}
@@ -241,13 +237,28 @@ public class GomokuGUI extends JFrame {
 	}
 	
 	public void playGame() {
-		layer.remove(buttonPanel);
-		game.getBoard().clear();
-		buttonPanel = buttonLayout();
-		setButtonLayout();
 		
-		buttonPanel.setVisible(true);
-		
+		if(connected == false) {
+			layer.remove(buttonPanel);
+			game.getBoard().clear();
+			buttonPanel = buttonLayout();
+			setButtonLayout();
+			
+			buttonPanel.setVisible(true);
+		} else {
+			layer.remove(buttonPanel);
+			game.getBoard().clear();
+			buttonPanel = buttonLayout();
+			setButtonLayout();
+			
+			buttonPanel.setVisible(true);
+			adapter.writePlay();
+			JOptionPane.showMessageDialog(gameFrame, "Waiting...", "Responding", 1) ;
+				
+			
+				
+			
+		}
 		
 		
 	}
@@ -255,26 +266,14 @@ public class GomokuGUI extends JFrame {
 	public void connectGame() {
 		
 		networkFrame = new NetworkGUI();
-		try {
-			ss = new ServerSocket(Integer.parseInt(networkFrame.portNumber.getText()));
-			networkFrame.status.append("Gomoku server started on port "
-                    + networkFrame.portNumber.getText() + "!\n");
-			networkFrame.reserver.setEnabled(false);
-		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			networkFrame.status.append("Something Went Wrong Please Try A Different Port\n");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			networkFrame.status.append("Something Went Wrong Please Try A Different Port\n");
-		}
-		
 		
 	}
 	
 	public static void main(String[] args) {
-		new GomokuGUI();
+		SwingUtilities.invokeLater(() ->{
+			new GomokuGUI();
+		});
+		
 	}
 	
 	
@@ -314,8 +313,8 @@ public class GomokuGUI extends JFrame {
 			connectButton = new JButton("Connect");
 			disconnectButton = new JButton("Disconnect");
 			reserver = new JButton("Reserver");
-			player = new JPanel(new FlowLayout(3));
-			opponent = new JPanel(new FlowLayout(3));
+			player = new JPanel(new FlowLayout(1));
+			opponent = new JPanel(new FlowLayout(1));
 			
 			
 			configureGUI();
@@ -331,38 +330,125 @@ public class GomokuGUI extends JFrame {
 			player.add(new JLabel("Player -------------------------------------------------------------"));
 			
 			player.add(new JLabel("Host Name"));
+			hostName.setColumns(20);
 			player.add(hostName);
 			hostName.setEditable(false);
 			
-			player.add(new JLabel("               "));
 			
 			player.add(new JLabel("IP Address"));
+			IPNumber.setColumns(20);
 			player.add(IPNumber);
 			IPNumber.setEditable(false);
 			
-			player.add(new JLabel("                          "));
-			
 			player.add(new JLabel("Port Number"));
+			portNumber.setColumns(20);
 			player.add(portNumber);
 			portNumber.setEditable(true);
 			
-			player.add(new JLabel("                          "));
+
 			
 			reserver.addActionListener(b ->{
-				try {
-					ss = new ServerSocket(Integer.parseInt(portNumber.getText()));
-					status.append("Gomoku server started on port "
-		                    + portNumber.getText() + "!\n");
-					reserver.setEnabled(false);
-				} catch (NumberFormatException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					status.append("Something Went Wrong Please Try A Different Port\n");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					status.append("Something Went Wrong Please Try A Different Port\n");
-				}
+				
+				new Thread(new Runnable() {
+			        public void run() {
+			        	Socket socket = null;
+			        	ServerSocket s;
+						try {
+							s = new ServerSocket(Integer.parseInt(portNumber.getText()));
+							socket = s.accept();
+						} catch (NumberFormatException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+			            
+			            System.out.println("Client connected");
+			            
+			            adapter = new NetworkAdapter(socket);
+						adapter.setMessageListener(new MessageListener() {
+
+							@Override
+							public void messageReceived(MessageType type, int x, int y) {
+								
+								if(type == MessageType.MOVE) {
+									
+									status.append("Move: " + x + " " + y + "\n");
+									
+									buttons.get((y*15) + x).doClick();
+									
+									adapter.writeMoveAck(x, y);
+									
+								} else if(type == MessageType.PLAY) {
+									
+									status.append("Play: " + x + " " + y + "\n");
+
+									if(JOptionPane.showConfirmDialog(networkFrame,"Play Game?","Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+										
+										boolean turn = false;
+										if(Math.random()+.5 > 1) {
+											turn = true;
+											
+										}
+										
+										layer.remove(buttonPanel);
+										game.getBoard().clear();
+										buttonPanel = buttonLayout();
+										setButtonLayout();
+										
+										buttonPanel.setVisible(true);
+										
+										disconnectButton.setEnabled(true);
+										connectButton.setEnabled(false);
+										
+										connected = true;
+										
+										
+										
+										adapter.writePlayAck(true, turn);
+										
+										
+									}
+									
+								} else if(type == MessageType.PLAY_ACK) {
+									
+									status.append("Play Ack: " + x + " " + y + "\n");
+									
+									if(x == 0) {
+										disconnectButton.doClick();
+										adapter.writeQuit();
+										
+									} 
+									
+									if(y == 1) {
+										game.switchTurn();
+									} 
+									
+								} else if(type == MessageType.MOVE_ACK) {
+									
+									status.append("Move Ack: " + x + " " + y + "\n");
+									
+									//game.switchTurn();
+									
+								} else if(type == MessageType.QUIT) {
+									
+									status.append("Quit: " + x + " " + y + "\n");
+									
+									disconnectButton.doClick();
+									
+								}
+								
+							}
+						});
+						
+						adapter.receiveMessagesAsync();
+			        }
+			    }).start();
+
+				
+				
+				
 			});
 			player.add(reserver);
 			
@@ -372,16 +458,14 @@ public class GomokuGUI extends JFrame {
 			opponent.add(new JLabel("Opponent ----------------------------------------------------------"));
 			
 			opponent.add(new JLabel("Host Name / IP Address"));
+			hostNameOp.setColumns(20);
 			opponent.add(hostNameOp);
 			portNumber.setEditable(true);
 			
-			opponent.add(new JLabel("          "));
-			
 			opponent.add(new JLabel("Port Number"));
+			portNumberOp.setColumns(20);
 			opponent.add(portNumberOp);
 			portNumber.setEditable(true);
-			
-			opponent.add(new JLabel("                    "));
 			
 			disconnectButton.setEnabled(false);
 			
@@ -390,25 +474,87 @@ public class GomokuGUI extends JFrame {
 				connectButton.setEnabled(false);
 				
 				connected = true;
-				playGame();
 				
 				Socket socket = null;
 				try {
 					socket = new Socket(hostName.getText(),Integer.parseInt(portNumberOp.getText()));
 					status.append("Socket Connected\n");
 				} catch (NumberFormatException | IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 					status.append("Socket Not Connected\n");
+					disconnectButton.doClick();
 				}
 				
 				adapter = new NetworkAdapter(socket);
+				adapter.setMessageListener(new MessageListener() {
+
+					@Override
+					public void messageReceived(MessageType type, int x, int y) {
+						
+						if(type == MessageType.MOVE) {
+							
+							status.append("Move: " + x + " " + y + "\n");
+							
+							buttons.get((y*15) + x).doClick();
+							
+							adapter.writeMoveAck(x, y);
+							
+						} else if(type == MessageType.PLAY) {
+							
+							status.append("Play: " + x + " " + y + "\n");
+
+							if(JOptionPane.showConfirmDialog(networkFrame,"Play Game?","Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+								
+								boolean turn = false;
+								if(Math.random()+.5 > 1) {
+									turn = true;
+								}
+								
+								adapter.writePlayAck(true, turn);
+								
+								
+							}
+							
+						} else if(type == MessageType.PLAY_ACK) {
+							
+							status.append("Play Ack: " + x + " " + y + "\n");
+							
+							if(x == 0) {
+								disconnectButton.doClick();
+								adapter.writeQuit();
+							} 
+							
+							if(y == 1) {
+								game.switchTurn();
+							} 
+							
+						} else if(type == MessageType.MOVE_ACK) {
+							
+							status.append("Move Ack: " + x + " " + y + "\n");
+							
+							//game.switchTurn();
+							
+						} else if(type == MessageType.QUIT) {
+							
+							status.append("Quit: " + x + " " + y + "\n");
+							
+							disconnectButton.doClick();
+							
+						}
+						
+					}
+				});
+				
+				adapter.receiveMessagesAsync();
 				
 			});
 			
 			disconnectButton.addActionListener(e ->{
 				connectButton.setEnabled(true);
 				disconnectButton.setEnabled(false);
+				
+				adapter.close();
+				adapter.writeQuit();
 				
 				connected = false;
 				playGame();
