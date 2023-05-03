@@ -69,7 +69,7 @@ public class Game {
 	}
 	//turn?
 	public void switchTurn() {
-		p1Turn = !p1Turn;
+		setP1Turn(!p1Turn);
 	}
 	//wincondition
 	public boolean winConditon() {
@@ -103,5 +103,9 @@ public class Game {
 	
 	public boolean getp1Turn() {
 		return p1Turn;
+	}
+
+	public void setP1Turn(boolean p1Turn) {
+		this.p1Turn = p1Turn;
 	}
 }

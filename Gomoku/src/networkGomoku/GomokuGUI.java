@@ -24,21 +24,19 @@ public class GomokuGUI extends JFrame {
 
 	private final Dimension dim = new Dimension(600,600);
 	
-	JFrame gameFrame;
-	JMenuBar menubar;
-	JMenu menu;
-	BoardPanel board;
-	JMenuItem play; 
-	JMenuItem connect; 
-	JPanel buttonPanel;
-	List<JRadioButton> buttons = new LinkedList<JRadioButton>();
-	JLayeredPane layer;
-	NetworkGUI networkFrame;
-	boolean connected = false;
+	private JFrame gameFrame;
+	private JMenuBar menubar;
+	private JMenu menu;
+	private BoardPanel board;
+	private JMenuItem play; 
+	private JMenuItem connect; 
+	private JPanel buttonPanel;
+	private List<JRadioButton> buttons = new LinkedList<>();
+	private JLayeredPane layer;
+	private NetworkGUI networkFrame;
+	private boolean connected = false;
 	
-	NetworkAdapter adapter;
-	ServerSocket ss;
-	
+	private NetworkAdapter adapter;
 	private Game game = new Game();
 	
 	public GomokuGUI() {
@@ -103,12 +101,15 @@ public class GomokuGUI extends JFrame {
 
 		gameFrame.pack();
 		gameFrame.setVisible(true);
-		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		gameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
 		game.getBoard().setPlayerType(1, 1);
-		game.getBoard().placeStone(1,10,game.getBoard().getPlayer1());
+		game.getBoard().placeStone(7,7,game.getBoard().getPlayer1());
+		game.getBoard().placeStone(6,6,game.getBoard().getPlayer1());
+		game.getBoard().placeStone(6,7,game.getBoard().getPlayer2());
+		game.getBoard().placeStone(7,6,game.getBoard().getPlayer2());
 		
-		buttons.get(16).doClick();
+		
 		
 		
 	}
@@ -238,7 +239,7 @@ public class GomokuGUI extends JFrame {
 	
 	public void playGame() {
 		
-		if(connected == false) {
+		if(!connected) {
 			layer.remove(buttonPanel);
 			game.getBoard().clear();
 			buttonPanel = buttonLayout();
@@ -270,9 +271,7 @@ public class GomokuGUI extends JFrame {
 	}
 	
 	public static void main(String[] args) {
-		SwingUtilities.invokeLater(() ->{
-			new GomokuGUI();
-		});
+		SwingUtilities.invokeLater(GomokuGUI::new);
 		
 	}
 	
@@ -321,6 +320,84 @@ public class GomokuGUI extends JFrame {
 			
 		}
 		
+		
+
+			public void messageReceivedOver(MessageType type, int x, int y) {
+				
+				if(type == MessageType.MOVE) {
+					
+					status.append("Move: " + x + " " + y + "\n");
+					
+					buttons.get((y*15) + x).doClick();
+					
+					adapter.writeMoveAck(x, y);
+					
+				} else if(type == MessageType.PLAY) {
+					
+					status.append("Play: " + x + " " + y + "\n");
+
+					if(JOptionPane.showConfirmDialog(networkFrame,"Play Game?","Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						
+						boolean turn = false;
+						if(Math.random()+.5 > 1) {
+							turn = true;
+							
+							
+						}
+						
+						game.setP1Turn(!turn);
+						
+						layer.remove(buttonPanel);
+						game.getBoard().clear();
+						buttonPanel = buttonLayout();
+						setButtonLayout();
+						
+						buttonPanel.setVisible(true);
+						
+						disconnectButton.setEnabled(true);
+						connectButton.setEnabled(false);
+						
+						connected = true;
+						
+						
+						
+						adapter.writePlayAck(true, turn);
+						
+						
+					}
+					
+				} else if(type == MessageType.PLAY_ACK) {
+					
+					status.append("Play Ack: " + x + " " + y + "\n");
+					
+					if(x == 0) {
+						disconnectButton.doClick();
+						adapter.writeQuit();
+						
+						
+					} 
+					
+					if(y == 1) {
+						game.setP1Turn(true);
+					} else {
+						game.setP1Turn(false);
+					}
+					
+				} else if(type == MessageType.MOVE_ACK) {
+					
+					status.append("Move Ack: " + x + " " + y + "\n");
+					
+				} else if(type == MessageType.QUIT) {
+					
+					status.append("Quit: " + x + " " + y + "\n");
+					
+					disconnectButton.doClick();
+					
+				}
+				
+			}
+		
+		
 		public void configureGUI() {
 			
 			
@@ -356,13 +433,9 @@ public class GomokuGUI extends JFrame {
 						try {
 							s = new ServerSocket(Integer.parseInt(portNumber.getText()));
 							socket = s.accept();
-						} catch (NumberFormatException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						} catch (NumberFormatException  | IOException e1) {
+							e1.printStackTrace();
+						} 
 			            
 			            System.out.println("Client connected");
 			            
@@ -372,72 +445,7 @@ public class GomokuGUI extends JFrame {
 							@Override
 							public void messageReceived(MessageType type, int x, int y) {
 								
-								if(type == MessageType.MOVE) {
-									
-									status.append("Move: " + x + " " + y + "\n");
-									
-									buttons.get((y*15) + x).doClick();
-									
-									adapter.writeMoveAck(x, y);
-									
-								} else if(type == MessageType.PLAY) {
-									
-									status.append("Play: " + x + " " + y + "\n");
-
-									if(JOptionPane.showConfirmDialog(networkFrame,"Play Game?","Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-										
-										boolean turn = false;
-										if(Math.random()+.5 > 1) {
-											turn = true;
-											
-										}
-										
-										layer.remove(buttonPanel);
-										game.getBoard().clear();
-										buttonPanel = buttonLayout();
-										setButtonLayout();
-										
-										buttonPanel.setVisible(true);
-										
-										disconnectButton.setEnabled(true);
-										connectButton.setEnabled(false);
-										
-										connected = true;
-										
-										
-										
-										adapter.writePlayAck(true, turn);
-										
-										
-									}
-									
-								} else if(type == MessageType.PLAY_ACK) {
-									
-									status.append("Play Ack: " + x + " " + y + "\n");
-									
-									if(x == 0) {
-										disconnectButton.doClick();
-										adapter.writeQuit();
-										
-									} 
-									
-									if(y == 1) {
-										game.switchTurn();
-									} 
-									
-								} else if(type == MessageType.MOVE_ACK) {
-									
-									status.append("Move Ack: " + x + " " + y + "\n");
-									
-									//game.switchTurn();
-									
-								} else if(type == MessageType.QUIT) {
-									
-									status.append("Quit: " + x + " " + y + "\n");
-									
-									disconnectButton.doClick();
-									
-								}
+								messageReceivedOver(type,x,y);
 								
 							}
 						});
@@ -491,56 +499,7 @@ public class GomokuGUI extends JFrame {
 					@Override
 					public void messageReceived(MessageType type, int x, int y) {
 						
-						if(type == MessageType.MOVE) {
-							
-							status.append("Move: " + x + " " + y + "\n");
-							
-							buttons.get((y*15) + x).doClick();
-							
-							adapter.writeMoveAck(x, y);
-							
-						} else if(type == MessageType.PLAY) {
-							
-							status.append("Play: " + x + " " + y + "\n");
-
-							if(JOptionPane.showConfirmDialog(networkFrame,"Play Game?","Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-								
-								boolean turn = false;
-								if(Math.random()+.5 > 1) {
-									turn = true;
-								}
-								
-								adapter.writePlayAck(true, turn);
-								
-								
-							}
-							
-						} else if(type == MessageType.PLAY_ACK) {
-							
-							status.append("Play Ack: " + x + " " + y + "\n");
-							
-							if(x == 0) {
-								disconnectButton.doClick();
-								adapter.writeQuit();
-							} 
-							
-							if(y == 1) {
-								game.switchTurn();
-							} 
-							
-						} else if(type == MessageType.MOVE_ACK) {
-							
-							status.append("Move Ack: " + x + " " + y + "\n");
-							
-							//game.switchTurn();
-							
-						} else if(type == MessageType.QUIT) {
-							
-							status.append("Quit: " + x + " " + y + "\n");
-							
-							disconnectButton.doClick();
-							
-						}
+						messageReceivedOver(type,x,y);
 						
 					}
 				});
@@ -574,7 +533,7 @@ public class GomokuGUI extends JFrame {
 			networkFrame.add(player);
 			networkFrame.add(opponent);
 			networkFrame.add(statusScroll);
-			networkFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			networkFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			
 			
 			networkFrame.setVisible(true);
