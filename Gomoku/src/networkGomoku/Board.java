@@ -156,7 +156,13 @@ public class Board {
     	List<Place> line = new LinkedList<Place>();
     	for(int i = 0; i < size; i ++) {
 			for(int j = 0; j < size; j ++) {
-				if(this.checkDiagonal(board[i][j])) {
+				if(this.checkDiagonalUp(board[i][j])) {
+					for(int count = 0; count < 5; count++) {
+		    			line.add(board[i+count][j+count]);	
+		    		}
+					return line;
+				}
+				if(this.checkDiagonalDown(board[i][j])) {
 					for(int count = 0; count < 5; count++) {
 		    			line.add(board[i+count][j+count]);	
 		    		}
@@ -224,7 +230,23 @@ public class Board {
      * catches if goes out of bounds
      * @param Place starting place*/
     
-    public boolean checkDiagonal(Place start) {
+    public boolean checkDiagonalUp(Place start) {
+    	
+    	try {
+    		for(int i = 1; i < 5; i++) {
+    			if(board[start.y][start.x].checkStone() != board[start.y - i][start.x + i].checkStone() || board[start.y - i][start.x + i].checkStone() == null) {
+    				return false;
+    			}
+    			
+    		}
+    	} catch(ArrayIndexOutOfBoundsException e) {
+    		return false;
+    	}
+    	return true;
+    	
+    }
+    
+    public boolean checkDiagonalDown(Place start) {
     	
     	try {
     		for(int i = 1; i < 5; i++) {
