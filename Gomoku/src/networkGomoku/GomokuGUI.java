@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.swing.*;
 
 import networkGomoku.NetworkAdapter.MessageListener;
 import networkGomoku.NetworkAdapter.MessageType;
+
 
 @SuppressWarnings("serial")
 public class GomokuGUI extends JFrame {
@@ -476,13 +478,28 @@ public class GomokuGUI extends JFrame {
 				connected = true;
 				
 				Socket socket = null;
-				try {
-					socket = new Socket(hostName.getText(),Integer.parseInt(portNumberOp.getText()));
-					status.append("Socket Connected\n");
-				} catch (NumberFormatException | IOException e1) {
-					e1.printStackTrace();
-					status.append("Socket Not Connected\n");
-					disconnectButton.doClick();
+				if(hostName.getText() == "localhost") {
+					try {
+						socket = new Socket(hostName.getText(),Integer.parseInt(portNumberOp.getText()));
+						status.append("Socket Connected\n");
+					} catch (NumberFormatException | IOException e1) {
+						e1.printStackTrace();
+						status.append("Socket Not Connected\n");
+						disconnectButton.doClick();
+					}
+				} else {
+					
+					try {
+						InetAddress net = hostName.getText();
+						SocketAddress so = new SocketAddress();
+						socket = new Socket(socket.AF_INET, socket.SOCK_STREAM);
+						status.append("Socket Connected\n");
+					} catch (NumberFormatException | IOException e1) {
+						e1.printStackTrace();
+						status.append("Socket Not Connected\n");
+						disconnectButton.doClick();
+					}
+					
 				}
 				
 				adapter = new NetworkAdapter(socket);
